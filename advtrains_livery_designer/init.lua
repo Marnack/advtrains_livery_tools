@@ -441,7 +441,7 @@ local function get_livery_designer_context(player, wagon)
 	table.sort(livery_template_names, function(a, b) return a < b end)
 
 	local actual_textures = advtrains_livery_database.clone_textures(advtrains.wagon_objects[wagon.id]:get_properties().textures)
-	local livery_design = advtrains_livery_database.get_livery_design_from_textures(wagon_type, actual_textures)
+	local livery_design = advtrains_livery_database.get_livery_design_from_textures(wagon_type, actual_textures, wagon.id)
 	local current_textures = livery_design and advtrains_livery_database.get_livery_textures_from_design(livery_design, wagon.id)
 	local editor_livery_design = livery_design
 	local editor_textures = advtrains_livery_database.clone_textures(current_textures)
