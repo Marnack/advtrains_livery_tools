@@ -289,7 +289,7 @@ end
 -- Get the list of names of predefined liveries for a given wagon type.
 
 function advtrains_livery_database.get_predefined_livery_names(wagon_type)
-	names = {}
+	local names = {}
 	if wagon_type and predefined_liveries[wagon_type] then
 		for name, predefined_livery in pairs(predefined_liveries[wagon_type]) do
 			table.insert(names, {livery_name = name, livery_template_name = predefined_livery.livery_design.livery_template_name})

@@ -282,7 +282,7 @@ local function update_color_selector_controls(color_selector_dialog)
 end
 
 local function clone_control_settings(src_controls)
-	controls = {
+	local controls = {
 		livery_template_name_selection = src_controls.livery_template_name_selection,
 		overlays = {},
 	}
