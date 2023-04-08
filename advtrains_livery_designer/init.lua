@@ -41,6 +41,51 @@ advtrains_livery_designer = {
 
 --------------------------------------------------------------------------------------------------------
 
+function advtrains_livery_designer.get_mod_version()
+	return {major = 0, minor = 8, patch = 1}
+end
+
+-- This utility function is intended to allow dependent mods to check if the
+-- needed version of advtrains_livery_designer is in use. It returns true if
+-- the current version of advtrains_livery_designer is equal to or greater
+-- than the given version info. The given version info can have nil values for
+-- patch or patch and minor numbers in which case those values will be
+-- ignored.
+function advtrains_livery_designer.is_compatible_mod_version(version_info)
+	local current_mod_info = advtrains_livery_designer.get_mod_version()
+
+	local major = tonumber(version_info.major)
+	if not major or major > current_mod_info.major then
+		return false
+	end
+
+	if  major < current_mod_info.major then
+		return true
+	end
+
+	local minor = tonumber(version_info.minor)
+	local patch = tonumber(version_info.patch)
+	if not minor then
+		return not patch
+	end
+
+	if minor > current_mod_info.minor then
+		return false
+	end
+
+	if minor < current_mod_info.minor then
+		return true
+	end
+
+	if patch and patch > current_mod_info.patch then
+		return false
+	end
+
+	return true
+end
+
+--------------------------------------------------------------------------------------------------------
+
 local color_definitions = {
 	{value = "#FA8072", name = S("Salmon")},
 	{value = "#DC143C", name = S("Crimson")},
