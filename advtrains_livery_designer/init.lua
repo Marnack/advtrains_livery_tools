@@ -127,17 +127,7 @@ for _, color_definition in ipairs(color_definitions) do
 end
 local color_override_options = table.concat(color_overrides, ",")
 
--- Build a table for lookup of a color_overrides index by value
-local color_override_index_lookup = {}
-for idx, color_override in ipairs(color_overrides) do
-	color_override_index_lookup[color_override] = idx
-end
-
-local function get_color_override_index(color_override)
-	return color_override_index_lookup[color]
-end
-
--- Build a table of predified color options (for use by the color selector)
+-- Build a table of predefined color options (for use by the color selector)
 local predefined_colors = {
 	S("Custom"),
 }
@@ -1196,9 +1186,6 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			if fields.ColorSelectorCancelButton or fields.ColorSelectorOkButton then
 				if context.color_selector_dialog.color_button_idx and fields.ColorSelectorOkButton then
 					local override_idx = context.color_selector_dialog.color_button_idx
-					local color_name = get_color_name_by_value(context.color_selector_dialog.current_color)
-					local selection_idx = get_color_override_index(color_name) or 2
-					local selection_value = color_name or color_overrides[selection_idx]
 
 					-- Update the livery design
 					context.livery_editor_tab.livery_design.overlays[override_idx].color = context.color_selector_dialog.current_color
