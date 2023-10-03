@@ -344,7 +344,8 @@ function advtrains_livery_database.get_wagon_livery_template(wagon_type, livery_
 	for id, overlay in ipairs(livery_templates[wagon_type][livery_template_name].overlays) do
 		wagon_livery_template.overlays[id] = {
 			name = overlay.name,
-			texture = overlay.textute,
+			slot_idx = overlay.slot_idx,
+			texture = overlay.texture,
 			alpha = overlay.alpha,
 		}
 	end
