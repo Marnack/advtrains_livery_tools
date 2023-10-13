@@ -171,7 +171,7 @@ function advtrains_livery_database.add_livery_template(wagon_type, livery_templa
 		-- used to identify its livery template. A workaround for this
 		-- restriction for the template creator is to duplicate the texture
 		-- file and give it a unique name.
-		local existing_livery_template_name, existing_livery_template = get_template(wagon_type, base_textures[1])
+		local existing_livery_template_name, _ = get_template(wagon_type, base_textures[1])
 		assert(not existing_livery_template_name,
 				"Attempt to register a livery template ('"..livery_template_name..
 				"') that does not have a uniquely named base texture for wagon type ('"..wagon_type..
@@ -224,7 +224,7 @@ function advtrains_livery_database.add_livery_template_overlay(wagon_type, liver
 	end
 
 	if overlay_count >= livery_templates[wagon_type][livery_template_name].expected_overlay_count then
-		-- This could be due to a mod not correctly  specifying the number of
+		-- This could be due to a mod not correctly specifying the number of
 		-- overlays that that will be in the template when it called
 		-- add_livery_template() or it could be an attempt by one mod to update
 		-- the overlays of a template created by another mod.
@@ -254,7 +254,7 @@ end
 -- a player could become overwhelmed with the number of options. That concern
 -- could be addressed if the tool that displays predefined liveries provides a
 -- filtering and/or search mechanism.
- 
+
 function advtrains_livery_database.add_predefined_livery(design_name, livery_design, mod_name, notes)
 	assert(design_name, "Invalid design name")
 	assert(is_valid_livery_design(livery_design), "Invalid livery design")
@@ -282,7 +282,7 @@ function advtrains_livery_database.add_predefined_livery(design_name, livery_des
 	else
 		minetest.debug("Failed to add predefined livery design due to duplicate name ('"..design_name.."') for wagon type ('"..livery_design.wagon_type.."')")
 	end
-	
+
 	return false
 end
 
@@ -401,7 +401,7 @@ function advtrains_livery_database.get_livery_design_from_textures(wagon_type, t
 	-- Extract the base texture from the first texture in livery_textures.
 	-- This will be used to identify the livery_template_name.
 	local base_texture = livery_textures[1]
-	local i, j = string.find(livery_textures[1], "^", 1, true)
+	local i, _ = string.find(livery_textures[1], "^", 1, true)
 	if i and i > 1 then
 		-- Trim any modifiers that were applied to the texture
 		base_texture = string.sub(livery_textures[1], 1, i - 1)
@@ -431,9 +431,10 @@ function advtrains_livery_database.get_livery_design_from_textures(wagon_type, t
 	for slot_idx, livery_texture in ipairs(livery_textures) do
 		local pos = 1
 		while pos do
-			local i, j = string.find(livery_texture, "^(", pos, true)
-			local m, n = j
+			local _, j = string.find(livery_texture, "^(", pos, true)
+			local n = j
 			if j then
+				local m
 				m, n = string.find(livery_texture, "^[colorize:#", pos, true)
 				if n then
 					local overlay_texture = string.sub(livery_texture, j + 1, m - 1)
@@ -509,7 +510,7 @@ function advtrains_livery_database.get_livery_textures_from_design(livery_design
 					if alpha < 0 then alpha = 0 end
 					if alpha > 255 then alpha = 255 end
 					local overlay_texture = "^("..livery_template.overlays[overlay.id].texture.."^[colorize:"..overlay.color..":"..alpha..")"
-					livery_textures[slot_idx] = livery_textures[slot_idx]..overlay_texture 
+					livery_textures[slot_idx] = livery_textures[slot_idx]..overlay_texture
 				end
 			end
 		end

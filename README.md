@@ -32,7 +32,7 @@ Note that fully achieving and maintaining all of these goals could require some 
 
 **Loads** - Freight wagons can have items in their inventory that affect their appearance.  These items are sometimes referred to as loads in this context.  Wagons that have loads can require alternate models and/or textures to be used in constructing their appearance.
 
-**Texture** - An image file that is used in constructing the appearance of a wagon or locomotive.  More than once texture can be used to construct that appearance.
+**Texture** - An image file that is used in constructing the appearance of a wagon or locomotive.  More than one texture can be used to construct that appearance.
 
 ## Author's Notes
 

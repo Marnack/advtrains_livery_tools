@@ -1,8 +1,8 @@
 local S
 if minetest.get_modpath("intllib") then
-    S = (intllib.make_gettext_pair and intllib.make_gettext_pair()) or intllib.Getter()
+	S = (intllib.make_gettext_pair and intllib.make_gettext_pair()) or intllib.Getter()
 else
-    S = function(s) return s end
+	S = function(s) return s end
 end
 
 local callback_functions = {}
@@ -59,7 +59,7 @@ function advtrains_livery_designer.is_compatible_mod_version(version_info)
 		return false
 	end
 
-	if  major < current_mod_info.major then
+	if major < current_mod_info.major then
 		return true
 	end
 
@@ -846,7 +846,6 @@ local function get_livery_editor_formspec_section(context)
 			"container[0.25,1.65]"..
 			"box[0,0;10.5,"..overlay_list_height..";#ffffff09]"
 
-		local wagon_livery_template = advtrains_livery_database.get_wagon_livery_template(context.wagon_type, livery_template_name)
 		local overlay_count = #context.livery_editor_tab.controls.overlays
 		local scroll_pos = context.common_controls.overlay_scrollbar_pos
 		local overlay_box_width = 10.4
@@ -930,7 +929,7 @@ end
 
 local function get_saved_livery_formspec_section(context)
 	local formspec = "textarea[0.5,2.5;13.5,2;;;"..S("A livery for this wagon type has not been recently saved.").."]"
-		
+
 	if context.saved_livery_tab and context.saved_livery_tab.livery_design then
 		local livery_template_name = context.saved_livery_tab.livery_design.livery_template_name or unknown_str
 
@@ -1390,7 +1389,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			minetest.show_formspec(player:get_player_name(), livery_designer_form, get_formspec(player, context))
 			return
 		end
-		
+
 		if fields.ApplyButton then
 			callback_functions[context.wagon_mod_name].apply_wagon_livery_textures(player, context.wagon, context.livery_editor_tab.textures)
 			play_apply_sound(context.wagon)
