@@ -1,9 +1,4 @@
-local S
-if minetest.get_modpath("intllib") then
-	S = (intllib.make_gettext_pair and intllib.make_gettext_pair()) or intllib.Getter()
-else
-	S = function(s) return s end
-end
+local S = minetest.get_translator("advtrains_livery_designer")
 
 local callback_functions = {}
 local livery_designer_tool = "advtrains_livery_designer:livery_designer"
@@ -42,7 +37,7 @@ advtrains_livery_designer = {
 --------------------------------------------------------------------------------------------------------
 
 function advtrains_livery_designer.get_mod_version()
-	return {major = 0, minor = 8, patch = 1}
+	return {major = 0, minor = 8, patch = 3}
 end
 
 -- This utility function is intended to allow dependent mods to check if the
@@ -909,7 +904,7 @@ local function get_livery_editor_formspec_section(context)
 		if not context.saved_livery_tab or not are_livery_designs_equivalent(context.saved_livery_tab.livery_design, context.livery_editor_tab.livery_design) then
 			formspec = formspec..
 				"button[11.25,7.0;2.0,0.8;EditorSaveButton;"..S("Save").."]"..
-				"tooltip[11.25,7.0;2.0,0.8;"..S("Copies the livery design to the saved livery tab and then\nactivates the saved livery tab.").."\n\n"..S("The currently saved livery design will be overwritten.").."]"
+				"tooltip[11.25,7.0;2.0,0.8;"..S("Copies the livery design to the saved livery tab and then activates the saved livery tab.").."\n\n"..S("The currently saved livery design will be overwritten.").."]"
 		end
 
 		if not context.applied then
@@ -1094,7 +1089,7 @@ local function get_color_selector_formspec_section(context)
 		"tooltip[0.2,0.6;0.5,0.5;"..saved_color.."]"..
 		"button[0.9,0.5;2.0,0.7;ColorSelectorSaveColorButton;"..S("Update").."]"..
 		"tooltip[0.9,0.5;2.0,0.7;"..S("Updates the saved color to match the current color.").."]"..
-		"button[3.0,0.5;2.0,0.7;ColorSelectorRecallButton;Recall]"..
+		"button[3.0,0.5;2.0,0.7;ColorSelectorRecallButton;"..S("Recall").."]"..
 		"tooltip[3.0,0.5;2.0,0.7;"..S("Updates the current color to match the saved color.").."]"..
 		"container_end[]"..
 
