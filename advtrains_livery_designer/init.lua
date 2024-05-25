@@ -1,5 +1,115 @@
 local S = minetest.get_translator("advtrains_livery_designer")
 
+----------------------------------------------------------------------------------------
+
+local function get_materials_minetest_game()
+	return {
+		base_game	= "Minetest Game",
+
+		bronze_ingot	= "default:bronze_ingot",
+		diamond			= "default:diamond",
+		dye_blue		= "dye:blue",
+		dye_green		= "dye:green",
+		dye_red			= "dye:red",
+		glass			= "default:glass",
+		gold_ingot		= "default:gold_ingot",
+		mese			= "default:mese",
+		obsidian_glass	= "default:obsidian_glass",
+	}
+end
+
+local function get_materials_mineclonia()
+	return {
+		base_game	= "Mineclonia",
+
+		bronze_ingot	= "mcl_core:gold_ingot",	-- bronze is not available
+		diamond			= "mcl_core:diamond",
+		dye_blue		= "mcl_dyes:blue",
+		dye_green		= "mcl_dyes:green",
+		dye_red			= "mcl_dyes:red",
+		glass			= "mcl_core:glass",
+		gold_ingot		= "mcl_core:gold_ingot",
+		mese			= minetest.get_modpath("mesecons_torch") and "mesecons_torch:redstoneblock" or "mcl_core:lapisblock",
+		obsidian_glass	= "mcl_core:glass_black",	-- obsidian glass is not available
+	}
+end
+
+local function get_materials_voxelibre()
+	return {
+		base_game	= "VoxeLibre/MineClone2",
+
+		bronze_ingot	= "mcl_core:gold_ingot",	-- bronze is not available
+		diamond			= "mcl_core:diamond",
+		dye_blue		= "mcl_dye:blue",
+		dye_green		= "mcl_dye:green",
+		dye_red			= "mcl_dye:red",
+		glass			= "mcl_core:glass",
+		gold_ingot		= "mcl_core:gold_ingot",
+		mese			= minetest.get_modpath("mesecons_torch") and "mesecons_torch:redstoneblock" or "mcl_core:lapisblock",
+		obsidian_glass	= "mcl_core:glass_black",	-- obsidian glass is not available
+	}
+end
+
+local function get_materials_farlands_reloaded()
+	return {
+		base_game	= "Farlands Reloaded",
+
+		bronze_ingot	= "fl_ores:bronze_ingot",
+		diamond			= "fl_ores:diamond_ore",
+		dye_blue		= "fl_dyes:blue_dye",
+		dye_green		= "fl_dyes:green_dye",
+		dye_red			= "fl_dyes:red_dye",
+		glass			= "fl_glass:framed_glass",
+		gold_ingot		= "fl_ores:gold_ingot",
+		mese			= "fl_ores:bronze_ingot",
+		obsidian_glass	= "fl_ores:bronze_ingot",	-- obsidian is not yet available, use an alternate for now.
+	}
+end
+
+local function get_materials_hades_revisited()
+	return {
+		base_game	= "Hades Revisited",
+
+		bronze_ingot	= "hades_core:bronze_ingot",
+		diamond			= "hades_core:diamond",
+		dye_blue		= "hades_dye:blue",
+		dye_green		= "hades_dye:green",
+		dye_red			= "hades_dye:red",
+		glass			= "hades_core:glass",
+		gold_ingot		= "hades_core:gold_ingot",
+		mese			= "hades_core:mese",
+		obsidian_glass	= "hades_core:obsidian_glass",
+	}
+end
+
+local function get_materials()
+	if minetest.get_modpath("default") and minetest.get_modpath("dye") then
+		return get_materials_minetest_game()
+	end
+
+	if minetest.get_modpath("mcl_core") and minetest.get_modpath("mcl_dyes") then
+		return get_materials_mineclonia()
+	end
+
+	if minetest.get_modpath("mcl_core") and minetest.get_modpath("mcl_dye") then
+		return get_materials_voxelibre()
+	end
+
+	if minetest.get_modpath("fl_dyes") and minetest.get_modpath("fl_glass") and minetest.get_modpath("fl_ores") then
+		return get_materials_farlands_reloaded()
+	end
+
+	if minetest.get_modpath("hades_core") and minetest.get_modpath("hades_dye") then
+		return get_materials_hades_revisited()
+	end
+
+	return nil
+end
+
+local materials = get_materials()
+
+----------------------------------------------------------------------------------------
+
 local callback_functions = {}
 local livery_designer_tool = "advtrains_livery_designer:livery_designer"
 local livery_designer_form = "advtrains_livery_designer:livery_designer_form"
@@ -20,14 +130,17 @@ minetest.register_tool(livery_designer_tool, {
 	stack_max = 1,
 })
 
-minetest.register_craft({
-	output = livery_designer_tool,
-	recipe = {
-		{"dye:red", "default:obsidian_glass", "default:diamond"},
-		{"dye:green", "default:mese", "default:gold_ingot"},
-		{"dye:blue", "default:glass", "default:bronze_ingot"},
-	}
-})
+-- Only register the crafting recipe if the needed mods and their materials are available.
+if materials then
+	minetest.register_craft({
+		output = livery_designer_tool,
+		recipe = {
+			{materials.dye_red, materials.obsidian_glass, materials.diamond},
+			{materials.dye_green, materials.mese, materials.gold_ingot},
+			{materials.dye_blue, materials.glass, materials.bronze_ingot},
+		}
+	})
+end
 
 advtrains_livery_designer = {
 	contexts = {},
@@ -37,7 +150,7 @@ advtrains_livery_designer = {
 --------------------------------------------------------------------------------------------------------
 
 function advtrains_livery_designer.get_mod_version()
-	return {major = 0, minor = 8, patch = 3}
+	return {major = 0, minor = 8, patch = 4}
 end
 
 -- This utility function is intended to allow dependent mods to check if the

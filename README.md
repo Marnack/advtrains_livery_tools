@@ -1,6 +1,6 @@
 # AdvTrains Livery Tools
 
-Currently in Beta release, AdvTrains Livery Tools is an extension for [Advanced Trains](https://content.minetest.net/packages/orwell/advtrains/) that adds APIs for mod developers to support more livery options for their wagons and locomotives.  It also adds a livery designer tool that can be used by players in-game to view and customize the liveries of their wagons and locomotives from participating mods.
+Currently in Beta release, AdvTrains Livery Tools is an extension for [Advanced Trains](https://content.minetest.net/packages/orwell/advtrains/) that adds APIs for mod developers to support more livery options for their wagons and locomotives.  It also adds a livery designer tool that can be used by players in-game to view and customize the liveries of their wagons and locomotives from participating mods.  The [Classic Coaches](https://content.minetest.net/packages/Marnack/classic_coaches/) mod, the [TfL S7 Stock Modpack](https://content.minetest.net/packages/advtrains_supplemental/tfl_s7_stock_modpack/), the [Advtrains Japanese Tram TLR0600](https://content.minetest.net/packages/advtrains_supplemental/advtrains_train_jpntlr600/) mod and the [DlxTrains](https://content.minetest.net/packages/Marnack/dlxtrains/) modpack are examples of participating mods.
 
 ![](screenshot.png)
 
@@ -9,7 +9,7 @@ Currently in Beta release, AdvTrains Livery Tools is an extension for [Advanced 
 Please see the README file in each of the included mod folders for detailed information.
 
 - **AdvTrains Livery Database** - This mod provides an API for AdvTrains mods to register their wagons and associated livery information with a non-persistent in-game database for sharing with other mods.  Other mods can then use this data to preview, manipulate or apply livery designs to registered wagons.
-- **AdvTrains Livery Designer** - This mod provides an in-game tool that enables players to view and modify the livery of their wagons.  *The wagons must be from participating mods that register their wagons with the AdvTrains Livery Designer and that have livery information added to the AdvTrains Livery Database.*  The **Classic Coaches** mod is an example of a participating mod.
+- **AdvTrains Livery Designer** - This mod provides an in-game tool that enables players to view and modify the livery of their wagons.  *The wagons must be from participating mods that register their wagons with the AdvTrains Livery Designer and that have livery information added to the AdvTrains Livery Database.*
 
 ## Design Goals
 
@@ -34,13 +34,23 @@ Note that fully achieving and maintaining all of these goals could require some 
 
 **Texture** - An image file that is used in constructing the appearance of a wagon or locomotive.  More than one texture can be used to construct that appearance.
 
+## Game Support
+As with **AdvTrains**, AdvTrains Livery Tools is compatible with many games when playing in creative mode and fully supports survival mode in [Minetest Game](https://content.minetest.net/packages/Minetest/minetest_game/) and its many variants.  However, AdvTrains Livery Tools also supports survival mode in games that are not based on **Minetest Game** including the following:
+
+- [Farlands Reloaded](https://content.minetest.net/packages/wsor4035/farlands_reloaded/)
+- [Hades Revisited](https://content.minetest.net/packages/Wuzzy/hades_revisited/)
+- [Minecloneia](https://content.minetest.net/packages/ryvnf/mineclonia/)
+- [VoxeLibre](https://content.minetest.net/packages/Wuzzy/mineclone2/) (formerly known as MineClone2)
+
+Note that support for survival mode in those games is subject to potential breakage in the future if those games change their materials or crafting system.
+
 ## Author's Notes
 
 1) The included **AdvTrains Livery Designer** is a *livery* designer, not an appearance designer.  Other factors that impact the appearance of a wagon or locomotive are handled separately by other tools, other nodes, or by special code in their respective mods.
 
 ## Licenses
 
-Copyright © 2023 Marnack
+Copyright © 2023-2024 Marnack
 
 - AdvTrains Livery Tools code is licensed under the GNU AGPL version 3 license, see [LICENSE.txt](LICENSE.txt) for details.
 - Unless otherwise specified, AdvTrains Livery Tools (images, textures and sounds) are licensed under [CC BY-SA 3.0 Unported](https://creativecommons.org/licenses/by-sa/3.0/).
