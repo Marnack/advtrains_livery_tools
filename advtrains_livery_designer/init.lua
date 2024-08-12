@@ -150,7 +150,7 @@ advtrains_livery_designer = {
 --------------------------------------------------------------------------------------------------------
 
 function advtrains_livery_designer.get_mod_version()
-	return {major = 0, minor = 8, patch = 4}
+	return {major = 0, minor = 8, patch = 5}
 end
 
 -- This utility function is intended to allow dependent mods to check if the
