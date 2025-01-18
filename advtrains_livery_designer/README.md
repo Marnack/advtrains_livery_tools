@@ -85,7 +85,7 @@ Note that support for survival mode in those games is subject to potential break
 
 ## Licenses
 
-Copyright © 2023-2024 Marnack
+Copyright © 2023-2025 Marnack
 
 - AdvTrains Livery Designer is licensed under the GNU AGPL version 3 license.
 - Unless otherwise specified, AdvTrains Livery Designer media (textures and sounds) are licensed under [CC BY-SA 3.0 Unported](https://creativecommons.org/licenses/by-sa/3.0/).

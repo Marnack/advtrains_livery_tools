@@ -8,7 +8,7 @@ Mod developers should consult the included [API reference guide](API_reference_g
 
 ## Licenses
 
-Copyright © 2023-2024 Marnack
+Copyright © 2023-2025 Marnack
 
 - AdvTrains Livery Database is licensed under the GNU AGPL version 3 license.
 - Unless otherwise specified, AdvTrains Livery Database media (textures and sounds) are licensed under [CC BY-SA 3.0 Unported](https://creativecommons.org/licenses/by-sa/3.0/).

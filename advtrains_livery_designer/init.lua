@@ -150,46 +150,18 @@ advtrains_livery_designer = {
 --------------------------------------------------------------------------------------------------------
 
 function advtrains_livery_designer.get_mod_version()
-	return {major = 0, minor = 8, patch = 5}
+	-- Keep mod versions in synch for now.  This could change in the future.
+	return advtrains_livery_database.get_mod_version()
 end
 
 -- This utility function is intended to allow dependent mods to check if the
 -- needed version of advtrains_livery_designer is in use. It returns true if
 -- the current version of advtrains_livery_designer is equal to or greater
--- than the given version info. The given version info can have nil values for
--- patch or patch and minor numbers in which case those values will be
--- ignored.
-function advtrains_livery_designer.is_compatible_mod_version(version_info)
-	local current_mod_info = advtrains_livery_designer.get_mod_version()
+-- than the target version info.
 
-	local major = tonumber(version_info.major)
-	if not major or major > current_mod_info.major then
-		return false
-	end
-
-	if major < current_mod_info.major then
-		return true
-	end
-
-	local minor = tonumber(version_info.minor)
-	local patch = tonumber(version_info.patch)
-	if not minor then
-		return not patch
-	end
-
-	if minor > current_mod_info.minor then
-		return false
-	end
-
-	if minor < current_mod_info.minor then
-		return true
-	end
-
-	if patch and patch > current_mod_info.patch then
-		return false
-	end
-
-	return true
+function advtrains_livery_designer.is_compatible_mod_version(target_version)
+	local current_version = advtrains_livery_designer.get_mod_version()
+	return advtrains_livery_database.compare_version_info(target_version, current_version)
 end
 
 --------------------------------------------------------------------------------------------------------
@@ -533,36 +505,6 @@ local function are_livery_templates_equivalent(livery_template_1, livery_templat
 	return true
 end
 
-local function are_livery_designs_equivalent(livery_design_1, livery_design_2)
-	if not livery_design_1 or
-	   not livery_design_2 or
-	   livery_design_1.wagon_type ~= livery_design_2.wagon_type or
-	   livery_design_1.livery_template_name ~= livery_design_2.livery_template_name or
-	   livery_design_1.overlays and not livery_design_2.overlays or
-	   not livery_design_1.overlays and livery_design_2.overlays then
-		return false
-	end
-
-	-- Every overlay in livery design 1 should be in livery design 2 and...
-	for seq_number, overlay in pairs(livery_design_1.overlays) do
-		if not livery_design_2.overlays[seq_number] or
-		   overlay.id ~= livery_design_2.overlays[seq_number].id or
-		   overlay.color ~= livery_design_2.overlays[seq_number].color then
-			return false
-		end
-	end
-
-	-- ...every overlay in livery design 2 should also be in livery design 1
-	for seq_number, overlay in pairs(livery_design_2.overlays) do
-		if not livery_design_1.overlays[seq_number] or
-		   overlay.id ~= livery_design_1.overlays[seq_number].id or
-		   overlay.color ~= livery_design_1.overlays[seq_number].color then
-			return false
-		end
-	end
-	return true
-end
-
 local function get_livery_designer_context(player, wagon)
 	-- Validate the given wagon
 	if not is_valid_wagon(wagon) then
@@ -633,7 +575,7 @@ local function get_livery_designer_context(player, wagon)
 		-- cloning tabs.
 		override_values = {},
 
-		-- This a a snapshot of the selected wagon's design. It is only updated when the user applies
+		-- This is a snapshot of the selected wagon's design. It is only updated when the user applies
 		-- a livery design to the wagon. It should otherwise not be updated or edited.
 		current_livery_tab = {
 			textures = current_textures,
@@ -925,7 +867,7 @@ local function get_current_livery_formspec_section(context)
 		get_model_preview_formspec(context, context.current_livery_tab.textures, true)
 
 	if current_livery_design then
-		if not are_livery_designs_equivalent(current_livery_design, context.livery_editor_tab.livery_design) then
+		if not advtrains_livery_database.are_livery_designs_equivalent(current_livery_design, context.livery_editor_tab.livery_design) then
 			formspec = formspec..
 				"button[11.25,7.0;2.0,0.8;CurrentLiveryEditButton;"..S("Edit").."]"..
 				edit_livery_design_tooltip
@@ -1014,7 +956,7 @@ local function get_livery_editor_formspec_section(context)
 				"tooltip[1.425,7.0;2.0,0.8;"..S("Resets all color overrides to 'None'.").."]"
 		end
 
-		if not context.saved_livery_tab or not are_livery_designs_equivalent(context.saved_livery_tab.livery_design, context.livery_editor_tab.livery_design) then
+		if not context.saved_livery_tab or not advtrains_livery_database.are_livery_designs_equivalent(context.saved_livery_tab.livery_design, context.livery_editor_tab.livery_design) then
 			formspec = formspec..
 				"button[11.25,7.0;2.0,0.8;EditorSaveButton;"..S("Save").."]"..
 				"tooltip[11.25,7.0;2.0,0.8;"..S("Copies the livery design to the saved livery tab and then activates the saved livery tab.").."\n\n"..S("The currently saved livery design will be overwritten.").."]"
@@ -1093,12 +1035,12 @@ local function get_saved_livery_formspec_section(context)
 			"container_end[]"..
 			get_model_preview_formspec(context, context.saved_livery_tab.textures, true)
 
-		if not are_livery_designs_equivalent(context.saved_livery_tab.livery_design, context.livery_editor_tab.livery_design) then
+		if not advtrains_livery_database.are_livery_designs_equivalent(context.saved_livery_tab.livery_design, context.livery_editor_tab.livery_design) then
 			formspec = formspec..
 				"button[11.25,7.0;2.0,0.8;SavedLiveryEditButton;"..S("Edit").."]"..
 				edit_livery_design_tooltip
 		end
-		if not are_livery_designs_equivalent(context.saved_livery_tab.livery_design, context.current_livery_tab.livery_design) then
+		if not advtrains_livery_database.are_livery_designs_equivalent(context.saved_livery_tab.livery_design, context.current_livery_tab.livery_design) then
 			formspec = formspec..
 				"button[13.375,7.0;2.0,0.8;SavedLiveryApplyButton;"..S("Apply").."]"..
 				apply_livery_design_tooltip
@@ -1120,12 +1062,12 @@ local function get_predefined_liveries_formspec_section(context)
 			"container_end[]"..
 			get_model_preview_formspec(context, context.predefined_liveries_tab.textures, false)
 
-		if not are_livery_designs_equivalent(context.predefined_liveries_tab.livery_design, context.livery_editor_tab.livery_design) then
+		if not advtrains_livery_database.are_livery_designs_equivalent(context.predefined_liveries_tab.livery_design, context.livery_editor_tab.livery_design) then
 			formspec = formspec..
 				"button[11.25,7.0;2.0,0.8;PredefinedLiveriesEditButton;"..S("Edit").."]"..
 				edit_livery_design_tooltip
 		end
-		if not are_livery_designs_equivalent(context.predefined_liveries_tab.livery_design, context.current_livery_tab.livery_design) then
+		if not advtrains_livery_database.are_livery_designs_equivalent(context.predefined_liveries_tab.livery_design, context.current_livery_tab.livery_design) then
 			formspec = formspec..
 				"button[13.375,7.0;2.0,0.8;PredefinedLiveriesApplyButton;"..S("Apply").."]"..
 				apply_livery_design_tooltip
@@ -1352,7 +1294,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 					-- Update the applicable context.override_values[] to the updated value
 					save_override_value(context, override_idx, context.livery_editor_tab.livery_design.overlays[override_idx].color)
 
-					context.applied = are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design)
+					context.applied = advtrains_livery_database.are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design)
 				end
 				context.color_selector_dialog.is_active = false
 				set_context(player, context)
@@ -1468,7 +1410,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			save_override_values(context)
 
 			context.current_tab = 2		-- Switch to the editor tab
-			context.applied = are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design) -- should always be true
+			context.applied = advtrains_livery_database.are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design) -- should always be true
 			set_context(player, context)
 			minetest.show_formspec(player:get_player_name(), livery_designer_form, get_formspec(player, context) )
 			return
@@ -1481,7 +1423,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			save_override_values(context)
 
 			context.current_tab = 2		-- Switch to the editor tab
-			context.applied = are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design)
+			context.applied = advtrains_livery_database.are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design)
 			set_context(player, context)
 			minetest.show_formspec(player:get_player_name(), livery_designer_form, get_formspec(player, context) )
 			return
@@ -1493,7 +1435,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 			context.current_livery_tab = clone_tab(context.saved_livery_tab)
 
-			context.applied = are_livery_designs_equivalent(context.saved_livery_tab.livery_design, context.livery_editor_tab.livery_design)
+			context.applied = advtrains_livery_database.are_livery_designs_equivalent(context.saved_livery_tab.livery_design, context.livery_editor_tab.livery_design)
 			minetest.show_formspec(player:get_player_name(), livery_designer_form, get_formspec(player, context))
 			return
 		end
@@ -1539,7 +1481,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			-- Update context.livery_editor_tab.textures
 			context.livery_editor_tab.textures = advtrains_livery_database.get_livery_textures_from_design(context.livery_editor_tab.livery_design, context.wagon.id)
 
-			context.applied = are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design)
+			context.applied = advtrains_livery_database.are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design)
 			set_context(player, context)
 			minetest.show_formspec(player:get_player_name(), livery_designer_form, get_formspec(player, context) )
 		end
@@ -1561,7 +1503,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			local wagon_livery_template = advtrains_livery_database.get_wagon_livery_template(context.wagon_type, context.livery_editor_tab.livery_design.livery_template_name)
 			update_overlay_controls(wagon_livery_template, context.livery_editor_tab.livery_design, context.livery_editor_tab.controls.overlays)
 
-			context.applied = are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design)
+			context.applied = advtrains_livery_database.are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design)
 			set_context(player, context)
 			minetest.show_formspec(player:get_player_name(), livery_designer_form, get_formspec(player, context) )
 			return
@@ -1583,7 +1525,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			save_override_values(context)
 
 			context.current_tab = 2		-- Switch to the editor tab
-			context.applied = are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design)
+			context.applied = advtrains_livery_database.are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design)
 			set_context(player, context)
 			minetest.show_formspec(player:get_player_name(), livery_designer_form, get_formspec(player, context) )
 			return
@@ -1647,7 +1589,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				context.livery_editor_tab.livery_design.overlays[override_idx] and
 				context.livery_editor_tab.livery_design.overlays[override_idx].color or nil)
 
-			context.applied = are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design)
+			context.applied = advtrains_livery_database.are_livery_designs_equivalent(context.current_livery_tab.livery_design, context.livery_editor_tab.livery_design)
 			set_context(player, context)
 			minetest.show_formspec(player:get_player_name(), livery_designer_form, get_formspec(player, context) )
 			return

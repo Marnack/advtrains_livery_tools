@@ -10,6 +10,81 @@ local overlays_per_template_limit = 6
 -------------------------------------------------------------------------------
 -- External Utilities:
 
+-- This utility function compares a target version, expressed as a table of
+-- key-value pairs with keys of "major", "minor" and "patch", against a current
+-- version expressed as a table with similar form. It returns true if the
+-- current version's "major" value is equal to or greater than the target
+-- version's "major value. The target version can have nil values for "patch"
+-- or both "patch" and "minor" numbers in which case those values will be
+-- ignored.
+
+function advtrains_livery_database.compare_version_info(target_version, current_version)
+	local major = tonumber(target_version.major)
+	if not major or major > current_version.major then
+		return false
+	end
+
+	if major < current_version.major then
+		return true
+	end
+
+	local minor = tonumber(target_version.minor)
+	local patch = tonumber(target_version.patch)
+	if not minor then
+		return not patch
+	end
+
+	if minor > current_version.minor then
+		return false
+	end
+
+	if minor < current_version.minor then
+		return true
+	end
+
+	if patch and patch > current_version.patch then
+		return false
+	end
+
+	return true
+end
+
+function advtrains_livery_database.is_valid_livery_design(livery_design)
+	return livery_design and
+		livery_design.wagon_type and
+		livery_design.livery_template_name
+end
+
+function advtrains_livery_database.are_livery_designs_equivalent(livery_design_1, livery_design_2)
+	if not livery_design_1 or
+	   not livery_design_2 or
+	   livery_design_1.wagon_type ~= livery_design_2.wagon_type or
+	   livery_design_1.livery_template_name ~= livery_design_2.livery_template_name or
+	   livery_design_1.overlays and not livery_design_2.overlays or
+	   not livery_design_1.overlays and livery_design_2.overlays then
+		return false
+	end
+
+	-- Every overlay in livery design 1 should be in livery design 2 and...
+	for seq_number, overlay in pairs(livery_design_1.overlays) do
+		if not livery_design_2.overlays[seq_number] or
+		   overlay.id ~= livery_design_2.overlays[seq_number].id or
+		   overlay.color ~= livery_design_2.overlays[seq_number].color then
+			return false
+		end
+	end
+
+	-- ...every overlay in livery design 2 should also be in livery design 1
+	for seq_number, overlay in pairs(livery_design_2.overlays) do
+		if not livery_design_1.overlays[seq_number] or
+		   overlay.id ~= livery_design_1.overlays[seq_number].id or
+		   overlay.color ~= livery_design_1.overlays[seq_number].color then
+			return false
+		end
+	end
+	return true
+end
+
 function advtrains_livery_database.clone_livery_design(src_livery_design)
 	if not src_livery_design then
 		return nil
@@ -50,12 +125,6 @@ end
 -------------------------------------------------------------------------------
 -- Internal Utilities:
 
-local function is_valid_livery_design(livery_design)
-	return livery_design and
-		livery_design.wagon_type and
-		livery_design.livery_template_name
-end
-
 local function get_wagon_type_prefix(wagon_type)
 	local delimiter_pos, _ = string.find(wagon_type, ":")
 	if not delimiter_pos or delimiter_pos < 2 then
@@ -74,6 +143,24 @@ local function get_template(wagon_type, base_texture)
 end
 
 -------------------------------------------------------------------------------
+-- Mod Version Utilities:
+
+function advtrains_livery_database.get_mod_version()
+	return {major = 0, minor = 9, patch = 0}
+end
+
+-- This utility function is intended to allow dependent mods to check if the
+-- needed version of advtrains_livery_database is in use. It returns true if
+-- the current version of advtrains_livery_database is equal to or greater
+-- than the target version info.
+
+function advtrains_livery_database.is_compatible_mod_version(target_version)
+	local current_version = advtrains_livery_database.get_mod_version()
+	return advtrains_livery_database.compare_version_info(target_version, current_version)
+end
+
+-------------------------------------------------------------------------------
+-- Primary API:
 
 -- Every mod that needs to register one or more livery templates should call
 -- this function exactly once.
@@ -96,8 +183,6 @@ function advtrains_livery_database.register_mod(mod_name, optional_callback_func
 		minetest.debug("WARNING: An attempt to register mod '"..mod_name.."' multiple times with the train livery database is not supported and has been blocked.")
 	end
 end
-
--------------------------------------------------------------------------------
 
 -- This function should be called exactly once per wagon type being registered
 -- for a mod, regardless of how many templates are being registered for the
@@ -257,7 +342,7 @@ end
 
 function advtrains_livery_database.add_predefined_livery(design_name, livery_design, mod_name, notes)
 	assert(design_name, "Invalid design name")
-	assert(is_valid_livery_design(livery_design), "Invalid livery design")
+	assert(advtrains_livery_database.is_valid_livery_design(livery_design), "Invalid livery design")
 	assert(mod_name, "Invalid mod name")
 	assert(callback_functions[mod_name], "Attempt to add predefined livery for an unregistered mod ('"..mod_name.."').")
 
@@ -308,8 +393,6 @@ function advtrains_livery_database.get_predefined_livery(wagon_type, design_name
 	return
 end
 
--------------------------------------------------------------------------------
-
 function advtrains_livery_database.get_wagon_livery_overlay_name(wagon_type, livery_template_name, overlay_seq_number)
 	assert(wagon_type, "Invalid wagon type")
 	assert(livery_template_name, "Invalid livery template name")
@@ -323,11 +406,19 @@ function advtrains_livery_database.get_wagon_livery_overlay_name(wagon_type, liv
 	end
 end
 
+function advtrains_livery_database.has_wagon_livery_template(wagon_type, livery_template_name)
+	if wagon_type and livery_templates[wagon_type] and livery_template_name and livery_templates[wagon_type][livery_template_name] then
+		return true
+	end
+
+	return false
+end
+
 function advtrains_livery_database.get_wagon_livery_template(wagon_type, livery_template_name)
 	assert(wagon_type, "Invalid wagon type")
 	assert(livery_template_name, "Invalid livery template name")
 
-	if not livery_templates[wagon_type] or not livery_templates[wagon_type][livery_template_name] then
+	if not advtrains_livery_database.has_wagon_livery_template(wagon_type, livery_template_name) then
 		return nil
 	end
 
@@ -362,8 +453,6 @@ function advtrains_livery_database.get_livery_template_names_for_wagon(wagon_typ
 	end
 	return livery_template_names
 end
-
--------------------------------------------------------------------------------
 
 -- Attempt to determine the livery_design for a given wagon_type from its
 -- livery textures. Note that if livery textures were modified by the owning

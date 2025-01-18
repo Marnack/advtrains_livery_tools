@@ -1,6 +1,12 @@
 # AdvTrains Livery Tools
 
-Currently in Beta release, AdvTrains Livery Tools is an extension for [Advanced Trains](https://content.minetest.net/packages/orwell/advtrains/) that adds APIs for mod developers to support more livery options for their wagons and locomotives.  It also adds a livery designer tool that can be used by players in-game to view and customize the liveries of their wagons and locomotives from participating mods.  The [Classic Coaches](https://content.minetest.net/packages/Marnack/classic_coaches/) mod, the [TfL S7 Stock Modpack](https://content.minetest.net/packages/advtrains_supplemental/tfl_s7_stock_modpack/), the [Advtrains Japanese Tram TLR0600](https://content.minetest.net/packages/advtrains_supplemental/advtrains_train_jpntlr600/) mod and the [DlxTrains](https://content.minetest.net/packages/Marnack/dlxtrains/) modpack are examples of participating mods.
+Currently in Beta release, AdvTrains Livery Tools is an extension for [Advanced Trains](https://content.minetest.net/packages/orwell/advtrains/) that adds APIs for mod developers to support more livery options for their wagons and locomotives.  It also adds a livery designer tool that can be used by players in-game to view and customize the liveries of their wagons and locomotives from participating mods.  Examples of participating mods include:
+- [Advtrains Japanese Tram TLR0600](https://content.minetest.net/packages/advtrains_supplemental/advtrains_train_jpntlr600/)
+- [Classic Coaches](https://content.minetest.net/packages/Marnack/classic_coaches/)
+- [DlxTrains](https://content.minetest.net/packages/Marnack/dlxtrains/)
+- [Sim Trains](https://content.luanti.org/packages/Nazalassa/sim_trains/)
+- [Subways](https://content.luanti.org/packages/sylvester_kruin/subways/)
+- [TfL S7 Stock Modpack](https://content.minetest.net/packages/advtrains_supplemental/tfl_s7_stock_modpack/)
 
 ![](screenshot.png)
 
@@ -50,7 +56,7 @@ Note that support for survival mode in those games is subject to potential break
 
 ## Licenses
 
-Copyright © 2023-2024 Marnack
+Copyright © 2023-2025 Marnack
 
 - AdvTrains Livery Tools code is licensed under the GNU AGPL version 3 license, see [LICENSE.txt](LICENSE.txt) for details.
 - Unless otherwise specified, AdvTrains Livery Tools (images, textures and sounds) are licensed under [CC BY-SA 3.0 Unported](https://creativecommons.org/licenses/by-sa/3.0/).

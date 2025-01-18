@@ -101,8 +101,13 @@ For an example of all the changes needed to make an existing mod compatible with
 ## API Reference
 The following is a high level overview of the API.
 
+### Mod Version Functions
+The following functions provide information about the current version of the mod. Generally these would be called by dependent mods to verify that needed functionality is available.
+* **`get_mod_version()`** - Returns a table that indicates the current version of this mod.  This table is of the form: {major = x, minor = y, patch = z} where x, y and z are the current values.
+* **`is_compatible_mod_version()`** - Determines if the needed version of this mod is in use. It returns true if the current version of advtrains_livery_database is equal to or greater than the given version info. The given version info can have nil values for patch or patch and minor numbers in which case those values will be ignored.
+
 ### Primary Functions
-The following functions form the access points to the AdvTrains Livery Database. The **`register_`** and **`add_`** functions allow data to be added to the database and should called once per object instance. The **`get_`** functions can be called as often as needed.
+The following functions form the access points to the AdvTrains Livery Database. The **`register_`** and **`add_`** functions allow data to be added to the database and should called once per object instance. The other functions can be called as often as needed.
 * **`register_mod()`** - Each mod that adds data to the database should call this once before calling any of the other primary functions.  Mods can also optionally specify callback functions here that need to be called to support the specific needs of their livery implementation.
 * **`register_wagon()`** - This should be called once (by the mod that defines the wagon) for each wagon type that is will have livery templates in the database.
 * **`get_wagon_mod_name()`** - Gets the name of the mod that that registered a given wagon type.
@@ -112,6 +117,7 @@ The following functions form the access points to the AdvTrains Livery Database.
 * **`get_predefined_livery_names()`** - Gets the list of names of predefined liveries for a given wagon type.
 * **`get_predefined_livery()`** - Gets the predefined livery given a wagon type and livery name. Note that predefined livery names are unique per wagon type.
 * **`get_wagon_livery_overlay_name()`** - Gets the name of an overlay for a given wagon type, template and overlay sequence number.
+* **`has_wagon_livery_template()`** - Checks if a livery template for a given wagon type and template name exists.
 * **`get_wagon_livery_template()`** - Gets the livery template for a given wagon type and template name.
 * **`get_livery_template_names_for_wagon()`** -  Gets the list of names of livery templates for a given wagon type.
 * **`get_livery_design_from_textures()`** - Attempts to determine the livery_design for a given wagon_type from its livery textures. Note that if the livery textures were modified by the owning mod due to weathering, loads, etc. then this function could fail. The mod that defined the wagon should provide applicable callback functions to handle such cases.
@@ -119,6 +125,8 @@ The following functions form the access points to the AdvTrains Livery Database.
 
 ### Utility Functions
 The following functions do not interact with the livery database but may be helpful when used in conjunction with the functions that do.
+* **`is_valid_livery_design()`** - Performs a minimal validity check of the given livery design.
+* **`are_livery_designs_equivalent()`** - Tests if the given livery designs are equivalent.  It only checks if the wagon type, livery template name and any overlays match.
 * **`clone_livery_design()`** - Creates a deep copy of a given livery design.
 * **`clone_textures()`** - Creates a deep copy of a given list of textures.
 * **`get_overlays_per_template_limit()`** - Gets the maximum number of overlays that can be specified for a given livery template.  This is currently a relatively small number until the impact on performance is evaluated.
@@ -129,7 +137,7 @@ The following is an incomplete list of the items still needing to be updated or 
 * Add information about using callback functions for supporting more complex livery  implementations.
 ## Licenses
 
-Copyright © 2023 Marnack
+Copyright © 2023-2025 Marnack
 
 - AdvTrains Livery Database is licensed under the GNU AGPL version 3 license.
 - Unless otherwise specified, AdvTrains Livery Database media (textures and sounds) are licensed under [CC BY-SA 3.0 Unported](https://creativecommons.org/licenses/by-sa/3.0/).
